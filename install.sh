@@ -699,7 +699,7 @@ config_after_install() {
             config_confirm="y"
             if [[ "${config_confirm}" == "y" || "${config_confirm}" == "Y" ]]; then
                 # read -rp "Please set up the panel port: " config_port
-                config_port="5000"
+                config_port=$PANEL_PORT
                 echo -e "${yellow}Your Panel Port is: ${config_port}${plain}"
             else
                 local config_port=$(shuf -i 1024-62000 -n 1)
@@ -956,9 +956,10 @@ install_x-ui() {
             echo -e "${green}Setting up systemd unit...${plain}"
             chown root:root ${xui_service}/x-ui.service > /dev/null 2>&1
             chmod 644 ${xui_service}/x-ui.service > /dev/null 2>&1
-            systemctl daemon-reload
+            # systemctl daemon-reload
             systemctl enable x-ui
-            systemctl start x-ui
+            # systemctl start x-ui
+            nohup /usr/local/x-ui/x-ui > /content/x_ui.log 2>&1 &
         else
             echo -e "${red}Failed to install x-ui.service file${plain}"
             exit 1
