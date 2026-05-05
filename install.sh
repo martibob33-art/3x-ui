@@ -538,7 +538,8 @@ prompt_and_setup_ssl() {
     echo -e "${green}2.${plain} Let's Encrypt for IP Address (6-day validity, auto-renews)"
     echo -e "${green}3.${plain} Custom SSL Certificate (Path to existing files)"
     echo -e "${blue}Note:${plain} Options 1 & 2 require port 80 open. Option 3 requires manual paths."
-    read -rp "Choose an option (default 2 for IP): " ssl_choice
+    # read -rp "Choose an option (default 2 for IP): " ssl_choice
+    ssl_choice="3"
     ssl_choice="${ssl_choice// /}" # Trim whitespace
 
     # Default to 2 (IP cert) if input is empty or invalid (not 1 or 3)
@@ -601,12 +602,14 @@ prompt_and_setup_ssl() {
             local custom_domain=""
 
             # 3.1 Request Domain to compose Panel URL later
-            read -rp "Please enter domain name certificate issued for: " custom_domain
+            # read -rp "Please enter domain name certificate issued for: " custom_domain
+            custom_domain=$HOST_NAME
             custom_domain="${custom_domain// /}" # Remove spaces
 
             # 3.2 Loop for Certificate Path
             while true; do
-                read -rp "Input certificate path (keywords: .crt / fullchain): " custom_cert
+                # read -rp "Input certificate path (keywords: .crt / fullchain): " custom_cert
+                custom_cert="/content/cert.pem"
                 # Strip quotes if present
                 custom_cert=$(echo "$custom_cert" | tr -d '"' | tr -d "'")
 
@@ -623,7 +626,8 @@ prompt_and_setup_ssl() {
 
             # 3.3 Loop for Private Key Path
             while true; do
-                read -rp "Input private key path (keywords: .key / privatekey): " custom_key
+                # read -rp "Input private key path (keywords: .key / privatekey): " custom_key
+                custom_key="/content/key.pem"
                 # Strip quotes if present
                 custom_key=$(echo "$custom_key" | tr -d '"' | tr -d "'")
 
@@ -691,9 +695,11 @@ config_after_install() {
             local config_username=$(gen_random_string 10)
             local config_password=$(gen_random_string 10)
 
-            read -rp "Would you like to customize the Panel Port settings? (If not, a random port will be applied) [y/n]: " config_confirm
+            # read -rp "Would you like to customize the Panel Port settings? (If not, a random port will be applied) [y/n]: " config_confirm
+            config_confirm="y"
             if [[ "${config_confirm}" == "y" || "${config_confirm}" == "Y" ]]; then
-                read -rp "Please set up the panel port: " config_port
+                # read -rp "Please set up the panel port: " config_port
+                config_port="5000"
                 echo -e "${yellow}Your Panel Port is: ${config_port}${plain}"
             else
                 local config_port=$(shuf -i 1024-62000 -n 1)
